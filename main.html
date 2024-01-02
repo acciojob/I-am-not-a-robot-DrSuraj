@@ -1,18 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>I'm not a robot</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <main>
-      <!-- solution start -->
-      
-      <!-- solution end -->
-    </main>
-    <script src="./script.js"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Add your own styles or modify the existing ones in style.css */
+        #reset, #verify, #para {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<h3 id="h">Please click on the identical tiles to verify that you are not a robot.</h3>
+
+<div id="image-container">
+    <!-- Images will be dynamically added here using JavaScript -->
+</div>
+
+<button id="reset" onclick="resetState()">Reset</button>
+<button id="verify" onclick="verifyTiles()">Verify</button>
+<p id="para"></p>
+
+<script>
+    const images = ["img1", "img2", "img3", "img4", "img5"];
+    let selectedTiles = [];
+    let resetButton = document.getElementById('reset');
+    let verifyButton = document.getElementById('verify');
+    let para = document.getElementById('para');
+
+    // Function to shuffle array elements
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    // Function to render images
+    function renderImages() {
+        const container = document.getElementById('image-container');
+        container.innerHTML = '';
+
+        shuffleArray(images);
+        images.forEach((imgClass) => {
+            const img = document.createElement('img');
+            img.src = `https://placekitten.com/200/200?${Math.random()}`; // Replace with your image API or source
+            img.classList.add(imgClass);
+            img.addEventListener('click', () => handleImageClick(imgClass));
+            container.appendChild(img);
+        });
+    }
+
+    // Function to handle image click
+    function handleImageClick(imgClass) {
+        if (selectedTiles.length < 2 && !selectedTiles.includes(imgClass)) {
+            selectedTiles.push(imgClass);
+        }
+
+        if (selectedTiles.length === 2) {
+            showVerifyButton();
+        }
+
+        if (selectedTiles.length > 0) {
+            showResetButton();
+        }
+    }
+
+    // Function to show the reset button
+    function showResetButton() {
+        resetButton.style.display = 'block';
+    }
+
+    // Function to show the verify button
+    function showVerifyButton() {
+        verifyButton.style.display = 'block';
+    }
+
+    // Function to reset the state
+    function resetState() {
+        selectedTiles = [];
+        resetButton.style.display = 'none';
+        verifyButton.style.display = 'none';
+        para.textContent = '';
+        renderImages();
+    }
+
+    // Function to verify the selected tiles
+    function verifyTiles() {
+        if (selectedTiles.length === 2) {
+            if (selectedTiles[0] === selectedTiles[1]) {
+                para.textContent = 'You are a human. Congratulations!';
+            } else {
+                para.textContent = 'We can\'t verify you as a human. You selected the non-identical tiles.';
+            }
+            verifyButton.style.display = 'none';
+        }
+    }
+
+    // Initial rendering
+    renderImages();
+</script>
+
+</body>
 </html>
